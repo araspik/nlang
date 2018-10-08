@@ -5,7 +5,7 @@ docs/
 nlang.so
 nlang.dylib
 nlang.dll
-nlang.a
+libnlang.a
 nlang.lib
 nlang-test-*
 *.exe

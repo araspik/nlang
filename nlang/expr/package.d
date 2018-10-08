@@ -18,9 +18,15 @@ import nlang.type;
 /// The Expression class, used to classify different
 /// expressions.
 abstract class Expression {
+  @safe nothrow pure:
+
   /// Returns the type of the expression.
   @property const(Type) type() const
     out(result; result !is null, "Type must be valid");
+
+  /// Returns whether the expression can be resolved
+  /// at compile time.
+  bool resolvable() const;
 
   /// Resolves the expression to a constant expression.
   /// Returns 'null' if the expression is not resolvable

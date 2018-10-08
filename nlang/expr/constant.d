@@ -19,6 +19,12 @@ abstract class ConstantExpression: Expression {
 
   @safe nothrow pure:
 
+  /// Returns whether the expression is resolvable
+  /// at compile time.
+  override bool resolvable() const {
+    return true;
+  }
+
   /// Resolves the expression to a constant expression.
   /// Since all constant expressions are constant expressions,
   /// we finalize the resolver function and return it back.
