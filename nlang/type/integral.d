@@ -49,7 +49,7 @@ class IntegralType: Type {
   }
 
   /// Returns the size of the type, in bits.
-  override @property size_t size() const {
+  override @property size_t sizeBits() const {
     return size_;
   }
 
@@ -75,5 +75,25 @@ class IntegralType: Type {
       return new IntegralExpression(this, 0);
     else
       return new IntegralExpression(this, 0.0);
+  }
+
+  /// Checks whether the type is coercible to the given one.
+  override bool convertibleTo(Type type) const {
+    /// If converting to boolean, fine.
+    if (type is Type.builtins["bool"])
+      return true;
+    /// Otherwise we check if the type is an integral type.
+    if (auto to = cast(IntegralType)type) {
+      /// If so, then we follow a few rules:
+      /// No truncation!
+      if (sizeBits < to.sizeBits)
+        return false;
+      /// No converting floating point to integral!
+      if (integral && to.floating)
+        return false;
+      /// If those pass, then it is convertible.
+      return true;
+    }
+    return false;
   }
 }

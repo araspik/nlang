@@ -20,6 +20,7 @@
 module nlang.scoping;
 
 import nlang.statement;
+public import nlang.scoped;
 
 /// Provides scoping.
 class Scope {
@@ -27,12 +28,15 @@ class Scope {
   Scope parent;
   /// Local declarations.
   Declaration[] decls;
+  /// Matching holder.
+  Scoped holder;
 
   @safe nothrow pure:
 
   /// Full constructor.
-  this(Scope parent, Declaration[] decls) {
+  this(Scope parent, Scoped holder, Declaration[] decls) {
     this.parent = parent;
+    this.holder = holder;
     this.decls = decls;
   }
 
@@ -43,6 +47,16 @@ class Scope {
       foreach (ref decl; sc.decls)
         if (decl.ident == ident)
           return decl;
+    return null;
+  }
+
+  /// Finds and returns a given holder type, if found.
+  /// Otherwise returns null.
+  T find(T)()
+      if (is(T == class) && is(T : Scoped)) {
+    for (auto sc = this; sc !is null; sc = sc.parent)
+      if (T obj = cast(T)sc.holder)
+        return obj;
     return null;
   }
 }

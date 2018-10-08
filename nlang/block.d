@@ -13,16 +13,16 @@ import nlang.statement;
 import nlang.scoping;
 
 /// Provides scoped statement blocks.
-class Block: Statement {
+class Block: Statement, Scoped {
   /// The statements it holds.
   Statement[] statements;
   /// The scope.
-  Scope context;
+  private Scope context_;
 
   /// Full constructor.
   this(Statement[] statements, Scope context) {
     this.statements = statements;
-    this.context = context;
+    this.context_ = context;
   }
 
   /// Returns whether the statement can be
@@ -32,6 +32,11 @@ class Block: Statement {
       if (!s.resolvable)
         return false;
     return true;
+  }
+
+  /// Returns the contained scope.
+  @property const(Scope) context() const {
+    return context_;
   }
 
 }
