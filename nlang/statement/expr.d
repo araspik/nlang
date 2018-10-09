@@ -1,8 +1,7 @@
 /**** Provides expressions as statements.
   * 
-  * Expressions like assignment which are used
-    as both expressions and statements creates
-    a need for this.
+  * Expressions like assignment which are used as both
+    expressions and statements creates a need for this.
   * 
   * Author: ARaspiK
   * License: MIT
@@ -11,6 +10,7 @@ module nlang.statement.expr;
 
 import nlang.statement;
 import nlang.expr;
+import nlang.scoping;
 
 /// Provides expressions as statements.
 class ExpressionStatement: Statement {
@@ -22,7 +22,8 @@ class ExpressionStatement: Statement {
   @safe nothrow pure:
 
   /// Constructor.
-  this(Expression expr) {
+  this(Scope context, Expression expr) {
+    super(context);
     this.expr_ = expr;
   }
 
@@ -31,9 +32,9 @@ class ExpressionStatement: Statement {
     return expr_;
   }
 
-  /// Returns whether the statement can be
-  /// evaluated at compile time.
-  override bool resolvable() const {
+  /// Returns whether the statement can be evaluated at
+  /// compile time.
+  bool resolvable() const {
     return expr.resolvable;
   }
 }

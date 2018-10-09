@@ -13,11 +13,13 @@ import nlang.statement;
 import nlang.scoping;
 
 /// Provides scoped statement blocks.
-class Block: Statement, Scoped {
+final class Block: Statement, Scoped {
   /// The statements it holds.
   Statement[] statements;
   /// The scope.
   private Scope context_;
+
+  @safe nothrow pure:
 
   /// Full constructor.
   this(Statement[] statements, Scope context) {
@@ -27,7 +29,7 @@ class Block: Statement, Scoped {
 
   /// Returns whether the statement can be
   /// evaluated at compile time.
-  override bool resolvable() const {
+  bool resolvable() const {
     foreach (const s; statements)
       if (!s.resolvable)
         return false;
@@ -35,7 +37,7 @@ class Block: Statement, Scoped {
   }
 
   /// Returns the contained scope.
-  @property const(Scope) context() const {
+  @property const(Scope) innerScope() const {
     return context_;
   }
 

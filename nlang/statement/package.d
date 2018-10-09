@@ -12,11 +12,26 @@ public import nlang.statement.block;
 public import nlang.statement.expr;
 public import nlang.statement.declaration;
 
+import nlang.scoping;
+
 /// Provides a statement type.
-abstract class Statement {
+class Statement {
+  /// Scope.
+  private Scope context_;
+
   @safe nothrow pure:
 
-  /// Returns whether the statement can be
-  /// evaluated at compile time.
-  bool resolvable() const;
+  /// Constructor
+  this(Scope context) {
+    this.context_ = context;
+  }
+
+  /// Returns whether the statement can be evaluated at
+  /// compile time.
+  abstract bool resolvable() const;
+
+  /// Returns the stored scope (context).
+  final @property const(Scope) context() const {
+    return context_;
+  }
 }

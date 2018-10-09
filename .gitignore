@@ -12,3 +12,4 @@ nlang-test-*
 *.o
 *.obj
 *.lst
+nlc

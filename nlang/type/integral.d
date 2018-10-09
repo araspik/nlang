@@ -77,12 +77,14 @@ class IntegralType: Type {
       return new IntegralExpression(this, 0.0);
   }
 
-  /// Checks whether the type is coercible to the given one.
+  /// Checks whether the type is coercible to the given
+  /// one.
   override bool convertibleTo(Type type) const {
     /// If converting to boolean, fine.
     if (type is Type.builtins["bool"])
       return true;
-    /// Otherwise we check if the type is an integral type.
+    /// Otherwise we check if the type is an integral
+    /// type.
     if (auto to = cast(IntegralType)type) {
       /// If so, then we follow a few rules:
       /// No truncation!

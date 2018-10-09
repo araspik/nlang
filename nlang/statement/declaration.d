@@ -1,11 +1,10 @@
 /**** Provides a base class for declarations.
   * 
-  * Declarations act like statements and at
-    the same time provide their own semantics.
-  * They optionally take an Initialiser class
-    (which is checked for being of a valid
-    subclass) which is used to initialise the
-    declaration.
+  * Declarations act like statements and at the same
+    time provide their own semantics.
+  * Nothing specific is assumed about declaration types;
+    Only an identifier is required and enforced, along
+    with the Statement's requirement of scope.
   * 
   * Author: ARaspiK
   * License: MIT
@@ -22,7 +21,8 @@ class Declaration: Statement {
   @safe nothrow pure:
 
   /// Internal constructor.
-  protected this(string ident) {
+  protected this(Scope context, string ident) {
+    super(context);
     this.ident = ident;
   }
 }

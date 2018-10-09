@@ -24,5 +24,5 @@ interface Scoped {
   @safe nothrow pure:
 
   /// Returns the contained scope.
-  @property const(Scope) context() const;
+  abstract @property const(Scope) innerScope() const;
 }

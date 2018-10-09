@@ -1,0 +1,144 @@
+# Here is the grammar for NLang.
+# This is meant for parsing by Pegged.
+# 
+# Author: ARaspiK
+# License: MIT
+
+Parser:
+
+# This is the top-level target: A series of Declarations
+Declarations <- Set(Declaration)
+
+# A Statement matches exactly to the Statement AST. It is
+# either a Declaration, an Expression with ';', or a return
+# statement.
+Statement <
+  / Declaration
+  / ReturnStatement
+  / Expression :';'
+
+# A Declaration is either a variable or function declaration.
+Declaration <
+  / Variable :';'
+  / Function
+
+# A VariableDecl is a C-like variable declaration.
+Variable < Type Identifier (:'=' Expression)?
+
+# A FunctionDecl is a simple function declaration, which has
+# a Rust-like syntax.
+Function < :"fn" Identifier Params? (:"->" Type)? Block(Statement?)?
+
+# A Params is a set of parameters.
+Params < Set(VariableDecl, ';', '(', ')')
+
+# A type is another identifier. It may be a builtin type, but not
+# any other keyword.
+Type <-
+  / BuiltinType
+  / !Keyword identifier
+
+# An Identifier is exactly that. It excludes keywords.
+Identifier <- !Keyword identifier
+
+# An Expression is a constant expression.
+Expression <-
+  / ConstantExpression
+
+# A ReturnStatement is exactly like one in C.
+ReturnStatement < "return" Expression? :";"
+
+# A Block is a series of statements or declarations enclosed in
+# braces.
+Block(E) < :'{' Set(E) :'}'
+
+# A Set is a series of expressions with an optional separator.
+Set(E) <- (E Spacing)* E?
+Set(E, S) <- E? (Spacing :S Spacing E)* 
+Set(E, S, O, C) < :O E? (Spacing :S Spacing E)* :C
+
+# A ConstantExpression is any one of the integral expression
+# types: integral, floating-point, character, boolean, 'null',
+# and 'void'.
+ConstantExpression <-
+  / Floating
+  / Integral
+  / :quote Character :quote # Instead of another rule
+  / Boolean
+  / Null
+  / Void
+
+# A floating-point type is similar to one in D.
+Floating <-
+# f32
+  / decimal ;'f'
+# fbig
+  / decimal ;'l'
+# f64
+  / decimal
+
+# An integral type is basically the same as D but with Rust names.
+Integral <-
+# Hexadecimals - type calculated by bytes needed
+  / :'0' ('x' / 'X') ;~hexnum
+# anything unsigned
+  / ;~number ('u' / 'U')
+# anything signed
+  / ;~number
+
+# A character type is just a normal character or escape code.
+Character <- (;EscapeCode / .)
+
+# A boolean type is either "true" or "false".
+Boolean <- "true" / "false"
+
+# A null expression is just 'null'. Same for 'void'
+Null <- "null"
+Void <- "void"
+
+# Here is a list of builtin types.
+BuiltinType <-
+  / "null" / "void"
+  / "bool" / "char"
+  / ~([iu] ("8" / "16" / "32" / "64" / "size"))
+  / ~('f' ("32" / "64" / "big"))
+
+# Here is a list of all keywords.
+Keyword <-
+  / BuiltinType
+  / "fn"
+  / "return"
+
+# An escape code consists of a backslash plus a special character
+# which determines what the code results in.
+EscapeCode <- :'\\' (
+  / [abfnrtv] {parseEscapeCharacter}
+  / ~(:'x' hex hex) {parseEscapeByte}
+  / . # If it's anything else we let it go through.
+)
+
+# A comment is either a block comment or a single-line comment.
+Comment <-
+  / BlockComment
+  / LineComment
+
+# A block comment is a C++-style comment that nests.
+BlockComment < :"/*" ~(!"/*" !"*/" . / BlockComment)* :"*/"
+
+# A line comment is either a C-style or shell-style comment.
+LineComment < :("//" / "#") ~(!eol .)* :eol
+
+# Core expressions used throughout the grammar.
+hex <- [0-9a-fA-F]
+hexnum <- hex (:'_' / hex)*
+digit <- [0-9]
+number <- digit (:'_' / digit)*
+decimal <- number '.' number
+
+# Spacing is what acts as a separator between elements of rules
+# where the definition uses '<' not '<-', which use no separator
+# at all.
+Spacing <- :spacing* #(Comment :spacing?)*
+spacing <- space / eol / empty
+eol <- endOfLine
+empty <- :""

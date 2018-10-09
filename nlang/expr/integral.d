@@ -1,12 +1,8 @@
 /**** Provides constant integral expressions.
   * 
-  * It provides integral, floating-point, and character
-    types. It also includes the 'void' type.
-  * It provides limited conversions between these types
-    as implicit coercion and any conversion as explicit
-    conversions.
-    * For implicit coercion, truncation is prevented,
-      including for floating-point fractionals.
+  * It provides integral, floating-point, and
+    character types. It also includes the 'void'
+    type.
   * 
   * Author: ARaspiK
   * License: MIT
@@ -28,9 +24,9 @@ class IntegralExpression: ConstantExpression {
       ulong integral;
       real floating;
     }
-    /// The value.
-    Value val;
   }
+  /// The value.
+  Value val;
 
   @safe nothrow pure:
 
@@ -43,20 +39,23 @@ class IntegralExpression: ConstantExpression {
   this(const IntegralType type, ulong val) {
     this(type);
     assert (this.type.integral,
-      "An integral constant was passed with a non-integral type!");
+      "An integral constant was passed with a"
+        ~ " non-integral type!");
     this.val.integral = val;
   }
 
-  /// Full constructor: For floating-point expressions.
+  /// Full constructor: For floating-point
+  /// expressions.
   this(const IntegralType type, real val) {
     this(type);
     assert (this.type.floating,
-      "A floating-point constant was passed with a non-floating-point type!");
+      "A floating-point constant was passed with a"
+        ~ " non-floating-point type!");
     this.val.floating = val;
   }
 
   /// Returns the type of the expression.
-  override @property const(IntegralType) type() const {
+  @property const(IntegralType) type() const {
     return type_;
   }
 }

@@ -5,8 +5,8 @@ copyright "Copyright © 2018, ARaspiK"
 license "MIT"
 dependency "pegged" version="~>0.4.4"
 
-targetType "library"
-targetName "nlang"
+targetType "executable"
+targetName "nlc"
 
 sourcePaths "nlang"
 importPaths "."

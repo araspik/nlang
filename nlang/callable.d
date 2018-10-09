@@ -1,8 +1,7 @@
 /**** Provides function declarations.
   * 
-  * Functions consist of an identifier, a type,
-    and a series of statements which make up the
-    function body.
+  * Functions consist of an identifier, a type, and a
+    series of statements which make up the function body.
   * 
   * Author: ARaspiK
   * License: MIT
@@ -29,18 +28,33 @@ class Function: Declaration, Scoped {
   @safe nothrow pure:
 
   /// Full constructor, splits up the block input.
-  this(VR)(VR args, Type ret, Statement[] statements, Scope upper)
-      if (isInputRange!VR && is(ElementType!VR : Variable)) {
+  this(VR)(Scope context, VR args, Type ret,
+      Statement[] statements)
+      if (is(ElementType!VR : Variable)) {
+
+    super(context);
     this.ret = ret;
-    // Note how the scope is given a pointer to this function.
-    // In this way, the function passes over the Block class and
-    // becomes what the Scope refers to.
-    this.block = new Block(new Scope(upper, this,
-      args.map!(v => cast(Declaration)v).array), statements);
+
+    // Note how the scope is given a pointer to this
+    // function. In this way, the function passes over
+    // the Block class and becomes what the Scope refers
+    // to.
+    this.block = new Block(
+      new Scope(
+        context,
+        this,
+        args.map!(v => cast(Declaration)v).array
+      ),
+      statements);
   }
 
   /// Returns the matching scope.
-  @property const(Scope) context() const {
-    return block.context;
+  @property const(Scope) innerScope() const {
+    return block.innerScope;
+  }
+
+  /// Returns whether the function is resolvable.
+  bool resolvable() const {
+    return block.resolvable;
   }
 }
